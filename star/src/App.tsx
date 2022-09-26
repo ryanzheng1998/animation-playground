@@ -1,15 +1,11 @@
 import { animated, config, useSpring } from '@react-spring/web'
-import React from 'react'
 
 function App() {
-  const [flip, setFlip] = React.useState(false)
-
   const styles = useSpring({
     from: { length: 0 },
     to: { length: 1 },
-    reverse: flip,
-    onRest: () => setFlip((x) => !x),
     config: config.molasses,
+    loop: { reverse: true },
   })
 
   return (
