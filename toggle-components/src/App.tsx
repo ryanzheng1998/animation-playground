@@ -13,14 +13,20 @@ function App() {
   const content = transitions((styles, item) => {
     if (item) {
       return (
-        <a.div className="text-9xl absolute" style={styles}>
+        <a.div
+          className="text-9xl absolute"
+          style={{ ...styles, mixBlendMode: 'plus-lighter' }}
+        >
           😄
         </a.div>
       )
     }
 
     return (
-      <a.div className="text-9xl absolute" style={styles}>
+      <a.div
+        className="text-9xl absolute"
+        style={{ ...styles, mixBlendMode: 'plus-lighter' }}
+      >
         🤪
       </a.div>
     )
@@ -29,7 +35,7 @@ function App() {
   return (
     <>
       <div
-        style={{ mixBlendMode: 'plus-lighter' }}
+        style={{ isolation: 'isolate' }}
         className="fixed inset-0 grid place-items-center"
       >
         {content}
