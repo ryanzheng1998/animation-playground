@@ -1,5 +1,5 @@
+import { a, useTransition } from '@react-spring/web'
 import React from 'react'
-import { useTransition, a, Transition } from '@react-spring/web'
 
 function App() {
   const [show, setShow] = React.useState(true)
@@ -11,10 +11,10 @@ function App() {
   })
 
   const animatedContent = transition((style, item) => {
-    if (!item) return false
+    if (!item) return
 
     return (
-      <a.div className="text-9xl absolute" style={style}>
+      <a.div className="text-9xl" style={style}>
         ✌️
       </a.div>
     )
@@ -26,7 +26,7 @@ function App() {
         {animatedContent}
       </div>
       <button className="fixed top-3 left-3" onClick={() => setShow((x) => !x)}>
-        toggle Show
+        Toggle Show
       </button>
     </>
   )
