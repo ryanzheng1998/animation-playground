@@ -1,4 +1,4 @@
-import { animated, config, to, useSpring } from '@react-spring/web'
+import { animated, to, useSpring } from '@react-spring/web'
 import React from 'react'
 import pic from './assets/react.svg'
 
@@ -9,7 +9,11 @@ function App() {
     rotateX: 0,
     rotateY: 0,
     scale: 1,
-    config: config.gentle,
+    config: { mass: 5, tension: 350, friction: 40 },
+  }))
+
+  const [shadow, shadowApi] = useSpring(() => ({
+    boxShadow: `0px 10px 30px -5px rgba(0, 0, 0, 0.3)`,
   }))
 
   const [mouseDownPosition, setMouseDownPosition] =
@@ -51,6 +55,7 @@ function App() {
           rotateX: 0,
           rotateY: 0,
         })
+        shadowApi.start({ boxShadow: `0px 10px 30px -5px rgba(0, 0, 0, 0.3)` })
       }
     }
 
@@ -69,12 +74,18 @@ function App() {
         ref={elementRef}
         onMouseEnter={() => {
           api.start({ scale: 1.1 })
+          shadowApi.start({
+            boxShadow: `0px 30px 100px -5px rgba(0, 0, 0, 0.5)`,
+          })
           setMouseInsideElement(true)
         }}
         onMouseLeave={() => {
           setMouseInsideElement(false)
           if (mouseDownPosition !== null) return
           api.start({ scale: 1, rotateX: 0, rotateY: 0 })
+          shadowApi.start({
+            boxShadow: `0px 10px 30px -5px rgba(0, 0, 0, 0.3)`,
+          })
         }}
         onMouseMove={(e) => {
           if (mouseDownPosition !== null) return
@@ -102,14 +113,15 @@ function App() {
 
           setMouseDownPosition(new DOMPoint(x, y))
         }}
-        className="shadow-xl cursor-grab w-36 aspect-square rounded bg-green-400"
+        className="cursor-grab w-52 aspect-square rounded bg-green-400"
         style={{
           transform: to(
             [props.x, props.y, props.rotateX, props.rotateY, props.scale],
             (x, y, rotateX, rotateY, scale) => {
-              return `perspective(600px) translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`
+              return `translate(${x}px, ${y}px) perspective(600px) scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
             }
           ),
+          ...shadow,
         }}
       >
         <img className="w-full h-full" src={pic} draggable={false} />
