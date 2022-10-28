@@ -16,6 +16,10 @@ function App() {
   const props = useSpring({
     from: { scale: 1 },
     to: state === null ? { scale: 1 } : keyframe,
+    onChange: ({ value }, api) => {
+      if (state === null) return
+      console.log(api)
+    },
   })
 
   const props2 = useSpring({
