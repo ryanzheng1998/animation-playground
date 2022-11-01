@@ -2,8 +2,7 @@ import React from 'react'
 
 type DivProps = React.HTMLAttributes<HTMLDivElement>
 
-type a = React.LegacyRef<HTMLDivElement>
-
+// todo: forward ref
 const OnDrag2Div: React.FC<
   DivProps & {
     onDrag2?: (event: {
@@ -76,7 +75,6 @@ function App() {
 
           setElementPosition(new DOMPoint(x, y))
         }}
-        id="target"
         style={{
           transform: `translate(${elementPosition.x}px, ${elementPosition.y}px)`,
         }}
