@@ -16,9 +16,9 @@ function App() {
     <div className="fixed inset-0 overflow-hidden grid place-items-center">
       <AOnDrag2Div
         onDrag2={({ dragStartPosition, windowMouseEvent }) => {
-          const element = windowMouseEvent.target as HTMLElement
+          const element = windowMouseEvent.target as HTMLDivElement
 
-          console.log(element.pageX)
+          console.log(element)
 
           const x = windowMouseEvent.x - dragStartPosition.x
 
