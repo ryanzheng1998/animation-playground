@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body style="margin: 0px">
+    <div
+      id="square"
+      style="width: 150px; height: 150px; background: green; margin: 100px"
+    ></div>
+    <script>
+      let mousedownPosition = null
+      let currentTransform = new DOMPoint(0, 0)
+      const element = document.querySelector('#square')
+
+      element.addEventListener('mousedown', (e) => {
+        mousedownPosition = new DOMPoint(e.pageX, e.pageY)
+      })
+
+      document.addEventListener('mousemove', (e) => {
+        if (mousedownPosition === null) return
+
+        const mouseTravel = new DOMPoint(
+          e.pageX - mousedownPosition.x,
+          e.pageY - mousedownPosition.y
+        )
+
+        console.log(elementNewPosition)
+      })
+
+      document.addEventListener('mouseup', (e) => {
+        mousedownPosition = null
+      })
+    </script>
+  </body>
+</html>
