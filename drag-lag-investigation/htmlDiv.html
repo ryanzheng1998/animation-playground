@@ -9,30 +9,13 @@
   <body style="margin: 0px">
     <div
       id="square"
-      style="width: 150px; height: 150px; background: green; margin: 100px"
+      style="width: 150px; height: 150px; background: green"
     ></div>
     <script>
-      let mousedownPosition = null
-      let currentTransform = new DOMPoint(0, 0)
       const element = document.querySelector('#square')
 
-      element.addEventListener('mousedown', (e) => {
-        mousedownPosition = new DOMPoint(e.pageX, e.pageY)
-      })
-
       document.addEventListener('mousemove', (e) => {
-        if (mousedownPosition === null) return
-
-        const mouseTravel = new DOMPoint(
-          e.pageX - mousedownPosition.x,
-          e.pageY - mousedownPosition.y
-        )
-
-        console.log(mouseTravel)
-      })
-
-      document.addEventListener('mouseup', (e) => {
-        mousedownPosition = null
+        element.style.transform = `translate(${e.pageX}px, ${e.pageY}px)`
       })
     </script>
   </body>
