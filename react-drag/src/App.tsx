@@ -45,9 +45,9 @@ function App() {
           e.pageY - elementTranslate.y
         )
       }}
-      // style={{
-      //   transform: `translate(${elementTranslate.x}px, ${elementTranslate.y}px)`,
-      // }}
+      style={{
+        transform: `translate(${elementTranslate.x}px, ${elementTranslate.y}px)`,
+      }}
       className="bg-green-300 w-40 aspect-square m-10"
       id="square"
     />
