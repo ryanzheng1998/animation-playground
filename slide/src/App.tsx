@@ -1,48 +1,57 @@
-import { useState } from 'react'
-import { OnDrag2Div } from './OnDrag2Div'
-import { a, to, useSpring } from '@react-spring/web'
+import { a, config, useSpring } from '@react-spring/web'
+import { useEffect, useRef, useState } from 'react'
 
-const AOnDrag2Div = a(OnDrag2Div)
 function App() {
-  const [slidePosition, setSlidePosition] = useState(0)
-  const [hover, setHover] = useState(false)
-
-  const { scale, positionX } = useSpring({
-    scale: hover ? 1.1 : 1,
-    positionX: slidePosition,
+  const [props, api] = useSpring(() => {
+    return {
+      x: 0,
+    }
   })
 
+  const mouseDownTempX = useRef<number | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (mouseDownTempX.current === null) return
+
+      api.start({
+        x: e.pageX - mouseDownTempX.current,
+        config: { duration: 0 },
+      })
+    }
+
+    const handleMouseUp = () => {
+      mouseDownTempX.current = null
+      setIsDragging(false)
+      api.start({ x: 0, config: config.default })
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [])
+
   return (
-    <div className="fixed inset-0 overflow-hidden grid place-items-center">
-      <AOnDrag2Div
-        onDrag2={({ dragStartPosition, windowMouseEvent }) => {
-          const element = windowMouseEvent.target as HTMLDivElement
-
-          console.log(element)
-
-          const x = windowMouseEvent.x - dragStartPosition.x
-
-          setSlidePosition(x)
+    <div className="fixed inset-0 grid place-items-center">
+      <a.div
+        onPointerDown={(e) => {
+          setIsDragging(true)
+          mouseDownTempX.current = e.pageX - props.x.get()
         }}
-        onMouseDown={() => {
-          setHover(true)
-        }}
-        onMouseUp={() => {
-          setHover(false)
-        }}
-        onMouseLeave={() => {
-          setHover(false)
-        }}
-        className="bg-black text-white text-4xl px-8 py-3 rounded shadow select-none"
+        className={`bg-black text-white text-4xl px-8 py-3 rounded shadow select-none ${
+          isDragging ? 'cursor-grabbing' : 'cursor-grab'
+        }`}
         style={{
-          transform: to(
-            [positionX, scale],
-            (x, s) => `translateX(${x}px) scale(${s})`
-          ),
+          transform: props.x.to((x) => `translate(${x}px, 0px)`),
         }}
       >
         Slide.
-      </AOnDrag2Div>
+      </a.div>
     </div>
   )
 }
