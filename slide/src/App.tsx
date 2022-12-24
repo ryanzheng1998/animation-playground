@@ -1,57 +1,66 @@
-import { a, config, useSpring } from '@react-spring/web'
-import { useEffect, useRef, useState } from 'react'
+import { a, useSpring } from '@react-spring/web'
 
 function App() {
   const [props, api] = useSpring(() => {
     return {
       x: 0,
+      scale: 1,
     }
   })
 
-  const mouseDownTempX = useRef<number | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (mouseDownTempX.current === null) return
-
-      api.start({
-        x: e.pageX - mouseDownTempX.current,
-        config: { duration: 0 },
-      })
-    }
-
-    const handleMouseUp = () => {
-      mouseDownTempX.current = null
-      setIsDragging(false)
-      api.start({ x: 0, config: config.default })
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [])
-
   return (
     <div className="fixed inset-0 grid place-items-center">
-      <a.div
-        onPointerDown={(e) => {
-          setIsDragging(true)
-          mouseDownTempX.current = e.pageX - props.x.get()
-        }}
-        className={`bg-black text-white text-4xl px-8 py-3 rounded shadow select-none ${
-          isDragging ? 'cursor-grabbing' : 'cursor-grab'
-        }`}
-        style={{
-          transform: props.x.to((x) => `translate(${x}px, 0px)`),
-        }}
-      >
-        Slide.
-      </a.div>
+      <div className="relative">
+        <a.div
+          style={{
+            background: props.x.to((x) => (x > 0 ? 'green' : 'red')),
+          }}
+          className="absolute bg-red-400 inset-0 rounded shadow -z-10 grid items-center"
+        >
+          <a.div
+            style={{
+              justifySelf: props.x.to((x) => (x > 0 ? 'left' : 'right')),
+              scale: props.x.to((x) => {
+                const absX = Math.abs(x)
+                if (absX < 50) return 0.5
+                if (absX > 300) return 1
+                return 0.5 + ((absX - 50) / (300 - 50)) * (1 - 0.5)
+              }),
+            }}
+            className="rounded-full bg-white w-10 aspect-square mx-4"
+          />
+        </a.div>
+        <a.div
+          onPointerDown={(e) => {
+            api.start({ scale: 1.1 })
+            const mouseDownX = e.pageX - props.x.get()
+            const element = e.target as HTMLDivElement
+            element.setPointerCapture(e.pointerId)
+
+            const onPointerMove = (e: PointerEvent) => {
+              const x = e.pageX - mouseDownX
+              api.start({
+                x,
+                immediate: true,
+              })
+            }
+
+            const onPointerUp = (e: PointerEvent) => {
+              api.start({ x: 0, scale: 1 })
+              element.releasePointerCapture(e.pointerId)
+              element.removeEventListener('pointermove', onPointerMove)
+              element.removeEventListener('pointerup', onPointerUp)
+            }
+
+            element.addEventListener('pointermove', onPointerMove)
+            element.addEventListener('pointerup', onPointerUp)
+          }}
+          className={`bg-black text-white text-4xl px-12 py-3 rounded shadow select-none active:cursor-grabbing hover:cursor-grab`}
+          style={{ x: props.x, scale: props.scale }}
+        >
+          Slide.
+        </a.div>
+      </div>
     </div>
   )
 }

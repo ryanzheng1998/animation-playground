@@ -9,11 +9,13 @@ function PullRelease() {
     api.start({ x: down ? mx : 0, immediate: down })
   })
 
+  console.log(bind())
+
   // Bind it to a component
   return (
     <animated.div
       id="box"
-      className="bg-green-300 w-80 aspect-square cursor-grab touch-none active:cursor-grabbing"
+      className="bg-green-300 w-80 aspect-square cursor-grab touch-none active:cursor-grabbing active:bg-red-200"
       {...bind()}
       style={{ x, y }}
     />

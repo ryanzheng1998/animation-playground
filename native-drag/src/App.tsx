@@ -5,42 +5,33 @@ function App() {
   const mouseDownTemp = useRef<DOMPoint | null>(null)
   const currentTranslate = useRef<DOMPoint>(new DOMPoint(0, 0))
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (mouseDownTemp.current === null) return
-      if (square.current === null) throw new Error('impossible')
-
-      currentTranslate.current = new DOMPoint(
-        e.pageX - mouseDownTemp.current.x,
-        e.pageY - mouseDownTemp.current.y
-      )
-
-      square.current.style.transform = `translate(${currentTranslate.current.x}px, ${currentTranslate.current.y}px)`
-    }
-
-    const handleMouseUp = () => {
-      mouseDownTemp.current = null
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [])
-
   return (
     <div
       ref={square}
-      onMouseDown={(e) => {
-        if (square.current === null) throw new Error('impossible')
-
+      onPointerDown={(e) => {
         mouseDownTemp.current = new DOMPoint(
           e.pageX - currentTranslate.current.x,
           e.pageY - currentTranslate.current.y
         )
+        const element = e.target as HTMLDivElement
+        element.setPointerCapture(e.pointerId)
+      }}
+      onPointerMove={(e) => {
+        if (mouseDownTemp.current === null) return
+
+        const element = e.target as HTMLDivElement
+
+        currentTranslate.current = new DOMPoint(
+          e.pageX - mouseDownTemp.current.x,
+          e.pageY - mouseDownTemp.current.y
+        )
+
+        element.style.transform = `translate(${currentTranslate.current.x}px, ${currentTranslate.current.y}px)`
+      }}
+      onPointerUp={(e) => {
+        mouseDownTemp.current = null
+        const element = e.target as HTMLDivElement
+        element.releasePointerCapture(e.pointerId)
       }}
       className="bg-green-300 w-40 aspect-square m-10"
       id="square"
