@@ -10,6 +10,7 @@ function App() {
     return {
       y: 0,
       z: 0,
+      zIndex: 0,
       scale: 1,
     }
   })
@@ -55,6 +56,8 @@ function App() {
                 if (i !== i2) return
                 return {
                   scale: 1.1,
+                  z: 10,
+                  zIndex: 10,
                 }
               })
 
@@ -67,14 +70,14 @@ function App() {
 
                 // update the order
                 const currentOrder = elementInfo.current[i].order
+                const targetRect = rects.current[i]
                 const newOrder = rects.current.findIndex((rect) => {
-                  return y > rect.y && y < rect.y + rect.height
+                  const newY = y + targetRect.y
+                  return newY > rect.y && newY < rect.y + rect.height
                 })
                 const swapOrder =
                   elementInfo.current.find((x) => x.order === newOrder)
                     ?.order ?? currentOrder
-
-                console.log(currentOrder, newOrder)
 
                 elementInfo.current = elementInfo.current.map((x, i2) => {
                   if (i2 === i) {
@@ -107,7 +110,6 @@ function App() {
 
                   return {
                     y,
-                    z: 10,
                     immediate: true,
                   }
                 })
@@ -120,6 +122,7 @@ function App() {
                   return {
                     y: rects.current[order].y - rects.current[i2].y,
                     z: 0,
+                    zIndex: 0,
                     scale: 1,
                   }
                 })
