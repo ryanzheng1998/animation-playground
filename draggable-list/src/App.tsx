@@ -7,6 +7,15 @@ const list = [
   { value: 'is', color: 'yellow' },
   { value: 'a', color: 'purple' },
   { value: 'list', color: 'orange' },
+  { value: 'of', color: 'pink' },
+  { value: 'items', color: 'cyan' },
+  { value: 'that', color: 'magenta' },
+  { value: 'can', color: 'lime' },
+  { value: 'be', color: 'teal' },
+  { value: 'dragged', color: 'indigo' },
+  { value: 'around', color: 'gray' },
+  { value: 'and', color: 'brown' },
+  { value: 'sorted', color: 'gold' },
 ]
 
 function App() {
@@ -36,28 +45,28 @@ function App() {
               api.start((i2) => {
                 if (i !== i2) return
                 return {
-                  scale: 1.1,
+                  scale: 1,
                   z: 10,
                   boxShadow: '0 10px 20px 0 rgba(0, 0, 0, 0.5)',
                 }
               })
 
-              const mouseDownY = e.pageY - props.y.get() // this is for dragging
               const element = e.target as HTMLDivElement
               element.setPointerCapture(e.pointerId)
-              const elements = [
-                ...element.parentNode!.children,
-              ] as HTMLDivElement[]
+
+              const mouseDownY = e.pageY - props.y.get() // this is for dragging
+              const sortedElementYPosition = (
+                [...element.parentNode!.children] as HTMLDivElement[]
+              ).map((x) => x.offsetTop)
 
               const getClosestElementYPosition = (y: number) => {
                 return (
-                  elements.find((el, i) => {
-                    const nextElement = elements[i + 1]
-                    const nextElementYPosition =
-                      nextElement?.offsetTop ?? Infinity
+                  sortedElementYPosition.find((elementY, i) => {
+                    const nextYPosition =
+                      sortedElementYPosition[i + 1] ?? Infinity
 
-                    return y > el.offsetTop && y < nextElementYPosition
-                  })?.offsetTop ?? elements[0]!.offsetTop
+                    return y >= elementY && y <= nextYPosition
+                  }) ?? sortedElementYPosition[0]!
                 )
               }
 
@@ -71,44 +80,41 @@ function App() {
                   }
                 })
 
-                // update swap element
-                // change to find empty slot to swap with
+                // move other elements
                 {
-                  const yPosition = getClosestElementYPosition(e.pageY)
-                  const yPositions = elements.map((el, i) => {
-                    const goal = springs[i]!.y.goal
-                    return getClosestElementYPosition(goal + el.offsetTop)
-                  })
-                  const emptySlot = elements.find((el) => {
-                    return yPositions.some((x) => x === el.offsetTop)
-                  })
+                  const order = sortedElementYPosition
+                    .map((el, i2) => {
+                      if (i2 === i) {
+                        // hack to get the direction of the drag
+                        const emptyDirection = e.movementY > 0 ? 1 : -1
+
+                        return {
+                          y:
+                            getClosestElementYPosition(
+                              e.pageY -
+                                mouseDownY +
+                                element.offsetHeight / 2 +
+                                element.offsetTop
+                            ) + emptyDirection,
+                          key: i2,
+                        }
+                      }
+                      const goal = springs[i2]!.y.get()
+
+                      return { y: goal + el, key: i2 }
+                    })
+                    .sort((a, b) => a.y - b.y)
 
                   api.start((i2) => {
                     if (i === i2) return
-                    if (emptySlot === undefined) return
 
-                    const emptyYPosition = emptySlot.offsetTop
+                    const currentOrder = order.findIndex((x) => x.key === i2)
 
-                    const currentYPosition = yPositions[i2]!
-
-                    if (emptyYPosition > yPosition) {
-                      console.log(currentYPosition, emptyYPosition)
-                      if (
-                        currentYPosition > emptyYPosition ||
-                        yPosition < emptyYPosition
-                      )
-                        return
-
-                      const positionIndex = elements.findIndex(
-                        (el) => el.offsetTop === currentYPosition
-                      )
-
-                      return {
-                        y: elements[positionIndex]!.offsetTop,
-                      }
+                    return {
+                      y:
+                        sortedElementYPosition[currentOrder]! -
+                        sortedElementYPosition[i2]!,
                     }
-
-                    return {}
                   })
                 }
               }
@@ -117,7 +123,12 @@ function App() {
                 api.start((i2) => {
                   if (i !== i2) return
 
-                  const yPosition = getClosestElementYPosition(e.pageY)
+                  const yPosition = getClosestElementYPosition(
+                    e.pageY -
+                      mouseDownY +
+                      element.offsetHeight / 2 +
+                      element.offsetTop
+                  )
 
                   return {
                     y: yPosition - element.offsetTop,
