@@ -1,5 +1,4 @@
-import fs, { writeFile } from 'fs/promises'
-import fetch from 'node-fetch'
+import fs from 'fs/promises'
 
 const data = await fs.readFile('./wiki.html', 'utf8')
 
@@ -11,23 +10,30 @@ const srcset = data.match(/(?<=srcset=")([^"]|\n)*(?=")/g)
 if (srcset === null) throw new Error('no match')
 
 const imagePaths = srcset
-  .flatMap((x) =>
+  .flatMap(x =>
     x
       .replace(/\n/g, '')
       .split(',')
-      .map((x) => x.replace(/^(\s*)/g, '').replace(/\s*$/g, ''))
+      .map(x => x.replace(/^(\s*)/g, '').replace(/\s*$/g, ''))
   )
-  .filter((x) => x.at(-2) === '2')
-  .map((x) => x.replace(/ 2x$/, ''))
+  .filter(x => x.at(-2) === '2')
+  .filter(x => x.at(1) === '/')
+  .map(x => x.replace(/ 2x$/, ''))
+  .map(x => 'https:' + x)
 
-// download image
-const src =
-  'http://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Pents14.jpg/138px-Pents14.jpg'
+console.log(imagePaths)
 
-const res = await fetch(src)
+// download image async
+imagePaths.map(path => {
+  const imageName = path.split('/').at(-1)
+})
 
-// typescript is wired here, don't know why
-// this can be quicker
-const blob = (await res.blob()) as Blob
+// const src =
+//   'http://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Pents14.jpg/138px-Pents14.jpg'
 
-writeFile('./test.jpg', blob.stream())
+// const res = await fetch(src)
+
+// // this can be quicker
+// const blob = await res.blob()
+
+// writeFile('./test.jpg', blob.stream())

@@ -19,7 +19,7 @@ function App() {
   return (
     <>
       <a.div
-        ref={(ref) => {
+        ref={ref => {
           if (ref === null) return
 
           const first = firstRef.current
@@ -35,7 +35,7 @@ function App() {
             y: 0,
           })
         }}
-        onClick={() => setMove((x) => !x)}
+        onClick={() => setMove(x => !x)}
         className={`w-44 rounded aspect-square bg-green-400 fixed ${
           move ? 'top-80 left-80' : 'top-0 left-0'
         }`}
@@ -43,7 +43,7 @@ function App() {
       />
       <a.div
         onClick={() => {
-          setMove2((x) => !x)
+          setMove2(x => !x)
         }}
         className="w-44 rounded aspect-square bg-green-400 fixed top-0 right-0"
         style={props2}

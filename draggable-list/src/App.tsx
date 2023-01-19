@@ -41,8 +41,8 @@ function App() {
             key={i}
             className="rounded w-32 py-2 text-center m-1 cursor-grab active:cursor-grabbing select-none"
             style={{ ...props, background: x.color }}
-            onPointerDown={(e) => {
-              api.start((i2) => {
+            onPointerDown={e => {
+              api.start(i2 => {
                 if (i !== i2) return
                 return {
                   scale: 1,
@@ -51,13 +51,13 @@ function App() {
                 }
               })
 
-              const element = e.target as HTMLDivElement
+              const element = e.currentTarget
               element.setPointerCapture(e.pointerId)
 
               const mouseDownY = e.pageY - props.y.get() // this is for dragging
               const sortedElementYPosition = (
                 [...element.parentNode!.children] as HTMLDivElement[]
-              ).map((x) => x.offsetTop)
+              ).map(x => x.offsetTop)
 
               const getClosestElementYPosition = (y: number) => {
                 return (
@@ -72,7 +72,7 @@ function App() {
 
               const onPointerMove = (e: PointerEvent) => {
                 // drag element
-                api.start((i2) => {
+                api.start(i2 => {
                   if (i !== i2) return
                   return {
                     y: e.pageY - mouseDownY,
@@ -105,10 +105,10 @@ function App() {
                     })
                     .sort((a, b) => a.y - b.y)
 
-                  api.start((i2) => {
+                  api.start(i2 => {
                     if (i === i2) return
 
-                    const currentOrder = order.findIndex((x) => x.key === i2)
+                    const currentOrder = order.findIndex(x => x.key === i2)
 
                     return {
                       y:
@@ -120,7 +120,7 @@ function App() {
               }
 
               const onPointerUp = (e: PointerEvent) => {
-                api.start((i2) => {
+                api.start(i2 => {
                   if (i !== i2) return
 
                   const yPosition = getClosestElementYPosition(
