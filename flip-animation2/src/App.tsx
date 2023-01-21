@@ -8,6 +8,7 @@ interface PositionInfo {
   height: number
 }
 
+// this flip ignores the padding and border-radius
 const useFlip = (dep: DependencyList) => {
   const elementRef = useRef<HTMLDivElement | null>(null)
   const firstRef = useRef<PositionInfo | null>(null)
@@ -17,7 +18,7 @@ const useFlip = (dep: DependencyList) => {
     y: 0,
     scaleX: 1,
     scaleY: 1,
-    config: { friction: 180 },
+    // config: { friction: 180 },
   }))
 
   useEffect(() => {
@@ -72,7 +73,7 @@ function App() {
       <a.div
         ref={flip2.elementRef}
         className={`bg-white rounded m-5 p-3 ${hidden ? 'absolute' : 'static'}`}
-        style={{ ...flip2.props, transformOrigin: 'top left' }}
+        style={{ ...flip2.props, opacity, transformOrigin: 'top left' }}
       >
         <a.div
           style={{

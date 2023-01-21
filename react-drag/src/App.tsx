@@ -37,7 +37,7 @@ function App() {
   return (
     <div
       ref={square}
-      onMouseDown={(e) => {
+      onMouseDown={e => {
         if (square.current === null) throw new Error('impossible')
 
         mouseDownTemp.current = new DOMPoint(

@@ -20,9 +20,6 @@ const useFlip = (dep: DependencyList) => {
     y: 0,
     scaleX: 1,
     scaleY: 1,
-    config: {
-      // friction: 180,
-    },
   }))
 
   useEffect(() => {
@@ -31,6 +28,7 @@ const useFlip = (dep: DependencyList) => {
     if (element === null) return
 
     const first = firstRef.current
+
     const last = {
       x: element.offsetLeft,
       y: element.offsetTop,
@@ -137,28 +135,35 @@ function App() {
   const { elementRef, props, innerProps } = useFlip([move])
 
   return (
-    <a.div
-      ref={elementRef}
+    <div
       onClick={() => setMove(x => !x)}
-      className={`grid bg-green-400 p-6 rounded-tr-lg rounded-tl-lg rounded-br-3xl rounded-bl-sm cursor-pointer fixed ${
-        move ? 'top-80 left-80 w-96 h-44' : 'top-8 left-8 w-20 h-20'
-      }`}
-      style={{
-        ...props,
-        transformOrigin: 'top left',
-      }}
+      className="fixed inset-0 cursor-pointer"
     >
       <a.div
+        ref={elementRef}
+        className={`grid bg-green-400 p-6 rounded-tr-lg rounded-tl-lg rounded-br-3xl rounded-bl-sm absolute ${
+          move ? 'top-80 left-80 w-96 h-44' : 'top-8 left-8 w-20 h-20'
+        }`}
         style={{
-          ...innerProps,
+          ...props,
           transformOrigin: 'top left',
-          willChange: 'auto',
+          // this is required otherwise the animation will be janky
+          willChange: 'transform',
         }}
       >
-        <p>FLIP</p>
-        <p>FLIP</p>
+        <a.div
+          style={{
+            ...innerProps,
+            transformOrigin: 'top left',
+            // this is required otherwise the animation will be janky
+            willChange: 'transform',
+          }}
+        >
+          <p>FLIP</p>
+          <p>FLIP</p>
+        </a.div>
       </a.div>
-    </a.div>
+    </div>
   )
 }
 
