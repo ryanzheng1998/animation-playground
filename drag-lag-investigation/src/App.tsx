@@ -15,13 +15,13 @@ function App() {
       onPointerDown={e => {
         const mouseDownX = e.pageX - props.x.get()
         const mouseDownY = e.pageY - props.y.get()
-        const element = e.target as HTMLDivElement
+        const element = e.currentTarget
         element.setPointerCapture(e.pointerId)
 
         const onPointerMove = (e: PointerEvent) => {
           const x = e.pageX - mouseDownX
           const y = e.pageY - mouseDownY
-          api.start({ x, y, immediate: true })
+          api.set({ x, y })
         }
 
         const onPointerUp = (e: PointerEvent) => {

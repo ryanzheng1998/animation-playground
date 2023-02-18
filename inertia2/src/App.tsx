@@ -37,7 +37,6 @@ function App() {
   return (
     <a.div
       onPointerDown={e => {
-        // problem
         api.set({ velocityX: 0, velocityY: 0 })
         const mouseDownX = e.pageX - props.x.get()
         const mouseDownY = e.pageY - props.y.get()

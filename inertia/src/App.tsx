@@ -67,8 +67,6 @@ function App() {
             element.releasePointerCapture(e.pointerId)
             element.removeEventListener('pointermove', onPointerMove)
             api.start({
-              x: e.pageX - mouseDownX,
-              y: e.pageY - mouseDownY,
               config: (key: string) => {
                 if (key === 'x')
                   return {
